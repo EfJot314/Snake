@@ -1,7 +1,8 @@
 import pygame
 import sys
+import random as rnd
 from enums import *
-import SnakeElements
+import GameElements
 
 
 
@@ -29,11 +30,12 @@ class Main:
         #zmienne dotyczace gry
         self.mapX, self.mapY = 15, 15
         self.T = self.FPS / 3
+        self.apple = None
 
         #gracz
-        self.player = SnakeElements.Snake(7, 7, self.T)
+        self.player = GameElements.Snake(7, 7, self.T)
 
-    def draw(self):
+    def drawAll(self):
         #czarne tlo
         self.screen.fill(BLACK)
 
@@ -59,9 +61,44 @@ class Main:
         pygame.draw.rect(self.screen, GREEN_DARK, (dx, dy-self.unit, self.mapX*self.unit, self.unit))
         pygame.draw.rect(self.screen, GREEN_DARK, (dx, dy+self.mapY*self.unit, self.mapX*self.unit, self.unit))
 
+        #rysowanie jablka
+        if self.apple != None:
+            self.apple.draw(self.screen, self.unit, dx, dy)
+
         #rysowanie gracza
         self.player.draw(self.screen, self.unit, dx, dy)
                 
+    def generateApple(self):
+        if self.apple == None:
+            found = False
+            while not found:
+                #losuje wspolrzedne jablka
+                x = rnd.randint(0, self.mapX)
+                y = rnd.randint(0, self.mapY)
+
+                #sprawdzam czy nie chce wygenerowac jablka w wezu
+                found = True
+                if self.player.x == x and self.player.y == y:
+                    found = False
+                elif abs(self.player.xNorm-x) < 0.9 and abs(self.player.yNorm-y) < 0.9: #tu sprawdzam czy wlasnie nie wchodze na pole z ewentulanym jablkiem
+                    found = False
+                else:
+                    for tailElement in self.player.tail:
+                        if tailElement.x == x and tailElement.y == y:
+                            found = False
+                            break
+                
+                #jesli wszystko ok, to tworze jablko
+                if found:
+                    self.apple = GameElements.Apple(x, y)
+
+    def eatApple(self):
+        if self.player.x == self.apple.x and self.player.y == self.apple.y:
+            self.apple = None
+            self.player.addTailElement()
+            
+
+
     def run(self):
 
         #licznik iteracji
@@ -70,13 +107,18 @@ class Main:
         #glowna petla
         while self.running:
             #rysuje
-            self.draw()
+            self.drawAll()
+
+            #ewentualnie generuje jablko
+            self.generateApple()
 
             #poruszam gracza
             self.player.move()
             if self.counter % self.T == 0:
                 self.counter = (self.counter) % 10000
                 self.player.confirmPosition()
+                #ewentualne jedzenie jablka
+                self.eatApple()
 
             #przechwytywanie zdarzen
             for event in pygame.event.get():

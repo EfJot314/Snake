@@ -2,6 +2,17 @@ from enums import *
 import pygame 
 
 
+class Apple:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+    
+    def draw(self, screen, unit, dx, dy):
+        pygame.draw.circle(screen, RED, (dx+(self.x+0.5)*unit, dy+(self.y+0.5)*unit), unit/3)
+
+
+
+
 class SnakeElement:
     def __init__(self, x, y, v):
         #pozycja
@@ -69,6 +80,7 @@ class Snake(SnakeElement):
                         SnakeTailElement(self.x, self.y+2, self.v)
                     ]
         self.bendElements = []
+        self.newElement = None
 
     def move(self):
         super().move()
@@ -79,15 +91,24 @@ class Snake(SnakeElement):
         #usuwam zgiecia
         self.bendElements = []
 
+        #dodaje ewentualny nowy element do ogona
+        if self.newElement != None:
+            self.newElement.currentDirection = None
+            self.tail.append(self.newElement)
+            self.newElement = None
+
         #zmieniam kierunki mojemu ogonowi
         self.tail[0].nextDirection = self.currentDirection
         for i in range(1, len(self.tail)):
             self.tail[i].nextDirection = self.tail[i-1].currentDirection
+
+        
         
         #ustalam pozycje
         super().confirmPosition()
         for tailElement in self.tail:
             tailElement.confirmPosition()
+
 
         #jezeli jest gdzies zagiecie to je zapelniam, by waz byl jednoscia
         if self.currentDirection != self.tail[0].currentDirection:
@@ -96,8 +117,11 @@ class Snake(SnakeElement):
             if self.tail[i].currentDirection != self.tail[i-1].currentDirection:
                 x, y = self.tail[i-1].x, self.tail[i-1].y
                 self.bendElements.append(SnakeTailElement(x, y, 0))
-                
 
+    def addTailElement(self):
+        lastElement = self.tail[len(self.tail)-1]
+        self.newElement = SnakeTailElement(lastElement.x, lastElement.y, self.v)
+        
     def draw(self, screen, unit, dx, dy):
         #ogon
         for tailElement in self.tail:
@@ -105,6 +129,9 @@ class Snake(SnakeElement):
         #zagiecia
         for tailElement in self.bendElements:
             tailElement.draw(screen, unit, dx, dy)
+        #ewentualny nowy element
+        if self.newElement != None:
+            self.newElement.draw(screen, unit, dx, dy)
         #glowa
         super().draw(screen, unit, dx, dy, BROWN)
 
