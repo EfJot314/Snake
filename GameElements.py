@@ -118,6 +118,21 @@ class Snake(SnakeElement):
                 x, y = self.tail[i-1].x, self.tail[i-1].y
                 self.bendElements.append(SnakeTailElement(x, y, 0))
 
+    def checkGameOver(self, nX, nY):
+        #wyjscie z mapy gora-lewo
+        if self.x < 0 or self.y < 0:
+            return True
+        #wyjscie z mapy dol-prawo
+        if self.x >= nX or self.y >= nY:
+            return True
+        #zderzenie z wlasnym ogonem
+        for tailElement in self.tail:
+            if tailElement.x == self.x and tailElement.y == self.y:
+                return True
+        #jesli wszystko ok, to zwracam ze nie ma powodu do zakonczenia gry
+        return False
+        
+
     def addTailElement(self):
         lastElement = self.tail[len(self.tail)-1]
         self.newElement = SnakeTailElement(lastElement.x, lastElement.y, self.v)

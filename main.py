@@ -73,8 +73,8 @@ class Main:
             found = False
             while not found:
                 #losuje wspolrzedne jablka
-                x = rnd.randint(0, self.mapX)
-                y = rnd.randint(0, self.mapY)
+                x = rnd.randint(0, self.mapX-1)
+                y = rnd.randint(0, self.mapY-1)
 
                 #sprawdzam czy nie chce wygenerowac jablka w wezu
                 found = True
@@ -96,9 +96,7 @@ class Main:
         if self.player.x == self.apple.x and self.player.y == self.apple.y:
             self.apple = None
             self.player.addTailElement()
-            
-
-
+        
     def run(self):
 
         #licznik iteracji
@@ -119,13 +117,16 @@ class Main:
                 self.player.confirmPosition()
                 #ewentualne jedzenie jablka
                 self.eatApple()
+                #ewentualny koniec gry
+                if self.player.checkGameOver(self.mapX, self.mapY):
+                    self.running = False
 
             #przechwytywanie zdarzen
             for event in pygame.event.get():
                 #zamykanie okna
                 if event.type == pygame.QUIT:
                     self.running = False
-                    sys.exit()
+                    # sys.exit()
                 #klikniecia przyciskow
                 elif event.type == pygame.KEYDOWN:
                     #WSAD
