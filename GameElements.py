@@ -71,7 +71,6 @@ class SnakeElement:
 
 
 
-
 class Snake(SnakeElement):
     def __init__(self, x, y, T):
         super().__init__(x, y, 1/T)
@@ -120,19 +119,21 @@ class Snake(SnakeElement):
 
     def checkGameOver(self, nX, nY):
         #wyjscie z mapy gora-lewo
-        if self.x < 0 or self.y < 0:
+        if self.xNorm < 0 or self.yNorm < 0:
             return True
         #wyjscie z mapy dol-prawo
-        if self.x >= nX or self.y >= nY:
+        if self.xNorm+0.9 >= nX or self.yNorm+0.9 >= nY:
             return True
         #zderzenie z wlasnym ogonem
         for tailElement in self.tail:
             if tailElement.x == self.x and tailElement.y == self.y:
                 return True
+        #zderzenie z nowym elementem ogona
+        if self.newElement != None and abs(self.newElement.xNorm-self.xNorm) < 0.9 and abs(self.newElement.yNorm-self.yNorm) < 0.9:
+            return True
         #jesli wszystko ok, to zwracam ze nie ma powodu do zakonczenia gry
         return False
         
-
     def addTailElement(self):
         lastElement = self.tail[len(self.tail)-1]
         self.newElement = SnakeTailElement(lastElement.x, lastElement.y, self.v)
@@ -152,7 +153,6 @@ class Snake(SnakeElement):
 
 
 
-    
 
 class SnakeTailElement(SnakeElement):
     def draw(self, screen, unit, dx, dy):

@@ -10,14 +10,15 @@ import GameElements
 class Main:
     def __init__(self):
 
+        #pygame initialization
+        pygame.init()
+
         #zmienne dotyczace okna
         self.screen_width, self.screen_height = 800, 700
         self.unit = 30
         self.running = True
+        self.font = pygame.font.Font('freesansbold.ttf', 30)
 
-
-        #pygame initialization
-        pygame.init()
 
         #zegar
         self.FPS = 60
@@ -26,11 +27,13 @@ class Main:
         #okno
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height), pygame.RESIZABLE)
         pygame.display.set_caption("Snake")
+        
 
         #zmienne dotyczace gry
         self.mapX, self.mapY = 15, 15
-        self.T = self.FPS / 3
+        self.T = self.FPS / 4
         self.apple = None
+        self.score = 0
 
         #gracz
         self.player = GameElements.Snake(7, 7, self.T)
@@ -38,6 +41,10 @@ class Main:
     def drawAll(self):
         #czarne tlo
         self.screen.fill(BLACK)
+
+        #score
+        scoreText = self.font.render("Score: "+str(self.score), True, WHITE)
+        self.screen.blit(scoreText, (10,10))
 
         #przesuniecie mapy by byla na srodku
         mapWidth, mapHeight = self.unit*self.mapX, self.unit*self.mapY
@@ -94,6 +101,7 @@ class Main:
 
     def eatApple(self):
         if self.player.x == self.apple.x and self.player.y == self.apple.y:
+            self.score += 1
             self.apple = None
             self.player.addTailElement()
         
@@ -117,10 +125,11 @@ class Main:
                 self.player.confirmPosition()
                 #ewentualne jedzenie jablka
                 self.eatApple()
-                #ewentualny koniec gry
-                if self.player.checkGameOver(self.mapX, self.mapY):
-                    self.running = False
 
+            #ewentualny koniec gry
+            if self.player.checkGameOver(self.mapX, self.mapY):
+                self.running = False
+                
             #przechwytywanie zdarzen
             for event in pygame.event.get():
                 #zamykanie okna
