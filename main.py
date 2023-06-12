@@ -1,7 +1,7 @@
 import pygame
 import sys
 from enums import *
-import snakeElements
+import SnakeElements
 
 
 
@@ -14,9 +14,6 @@ class Main:
         self.unit = 30
         self.running = True
 
-        #zmienne dotyczace gry
-        self.mapX, self.mapY = 15, 15
-        
 
         #pygame initialization
         pygame.init()
@@ -27,11 +24,19 @@ class Main:
 
         #okno
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height), pygame.RESIZABLE)
+        pygame.display.set_caption("Snake")
+
+        #zmienne dotyczace gry
+        self.mapX, self.mapY = 15, 15
+        T = self.FPS/2
+
+        #gracz
+        self.player = SnakeElements.Snake(7, 7, T)
 
 
     def draw(self):
         #czarne tlo
-        self.screen.fill(Color.BLACK)
+        self.screen.fill(BLACK)
 
         #przesuniecie mapy by byla na srodku
         mapWidth, mapHeight = self.unit*self.mapX, self.unit*self.mapY
@@ -43,20 +48,20 @@ class Main:
             for j in range(self.mapY):
                 y = dy + self.unit*j
                 #zmieniam kolory by byla kratka
-                color = Color.GREEN
+                color = GREEN
                 if (i+j) % 2 == 0:
-                    color = Color.GREEN_LIGHT
+                    color = GREEN_LIGHT
                 #rysuje kwadracik
                 pygame.draw.rect(self.screen, color, (x, y, self.unit, self.unit))
         
         #obramowanie mapy
-        pygame.draw.rect(self.screen, Color.GREEN_DARK, (dx-self.unit, dy-self.unit, self.unit, (self.mapY+2)*self.unit))
-        pygame.draw.rect(self.screen, Color.GREEN_DARK, (dx+self.unit*self.mapX, dy-self.unit, self.unit, (self.mapY+2)*self.unit))
-        pygame.draw.rect(self.screen, Color.GREEN_DARK, (dx, dy-self.unit, self.mapX*self.unit, self.unit))
-        pygame.draw.rect(self.screen, Color.GREEN_DARK, (dx, dy+self.mapY*self.unit, self.mapX*self.unit, self.unit))
+        pygame.draw.rect(self.screen, GREEN_DARK, (dx-self.unit, dy-self.unit, self.unit, (self.mapY+2)*self.unit))
+        pygame.draw.rect(self.screen, GREEN_DARK, (dx+self.unit*self.mapX, dy-self.unit, self.unit, (self.mapY+2)*self.unit))
+        pygame.draw.rect(self.screen, GREEN_DARK, (dx, dy-self.unit, self.mapX*self.unit, self.unit))
+        pygame.draw.rect(self.screen, GREEN_DARK, (dx, dy+self.mapY*self.unit, self.mapX*self.unit, self.unit))
 
         #rysowanie gracza
-        
+        self.player.draw(self.screen, self.unit, dx, dy)
                 
 
 
