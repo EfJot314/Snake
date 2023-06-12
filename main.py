@@ -39,6 +39,13 @@ class Main:
         self.player = GameElements.Snake(7, 7, self.T)
 
     def drawAll(self):
+        #pobieram rozmiary okna
+        self.screen_width, self.screen_height = self.screen.get_size()
+
+        #obliczam wartosc jednostki
+        size = min(self.screen_width, self.screen_height)
+        self.unit = max(int(size/20), 10)
+
         #czarne tlo
         self.screen.fill(BLACK)
 
