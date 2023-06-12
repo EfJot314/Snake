@@ -14,6 +14,7 @@ GREY = (211, 211, 211)
 ORANGE = (255, 69, 0)
 PINK = (255, 105, 180)
 BROWN = (153, 76, 0)
+BROWN_LIGHT = (204, 102, 0)
 
 class Direction(Enum):
     NORTH = 0

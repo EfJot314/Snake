@@ -28,11 +28,10 @@ class Main:
 
         #zmienne dotyczace gry
         self.mapX, self.mapY = 15, 15
-        T = self.FPS/2
+        self.T = self.FPS / 3
 
         #gracz
-        self.player = SnakeElements.Snake(7, 7, T)
-
+        self.player = SnakeElements.Snake(7, 7, self.T)
 
     def draw(self):
         #czarne tlo
@@ -63,20 +62,21 @@ class Main:
         #rysowanie gracza
         self.player.draw(self.screen, self.unit, dx, dy)
                 
-
-
-
-        
-
-
     def run(self):
+
+        #licznik iteracji
+        self.counter = 0
 
         #glowna petla
         while self.running:
-            
             #rysuje
             self.draw()
 
+            #poruszam gracza
+            self.player.move()
+            if self.counter % self.T == 0:
+                self.counter = (self.counter) % 10000
+                self.player.confirmPosition()
 
             #przechwytywanie zdarzen
             for event in pygame.event.get():
@@ -84,6 +84,21 @@ class Main:
                 if event.type == pygame.QUIT:
                     self.running = False
                     sys.exit()
+                #klikniecia przyciskow
+                elif event.type == pygame.KEYDOWN:
+                    #WSAD
+                    if event.key == pygame.K_w:
+                        self.player.nextDirection = Direction.NORTH
+                    elif event.key == pygame.K_d:
+                        self.player.nextDirection = Direction.EAST
+                    elif event.key == pygame.K_s:
+                        self.player.nextDirection = Direction.SOUTH
+                    elif event.key == pygame.K_a:
+                        self.player.nextDirection = Direction.WEST
+                
+            
+            #inkrementacja licznika
+            self.counter += 1
 
             #odswiezanie okna
             pygame.display.update()
